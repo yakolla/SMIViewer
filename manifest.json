@@ -11,7 +11,7 @@
                 "contents.js"
             ],
             "css": [ "t.css" ],
-            "all_frames": true
+            "all_frames": false
         }
     ],
     "icons": {
