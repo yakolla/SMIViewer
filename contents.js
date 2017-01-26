@@ -81,7 +81,7 @@ function lazyLoading(str, info)
         {
             var smiLayer = layerUIs[info.langType];
             if (null == smiLayer) {
-                smiLayer = createSMILayer(100, 250 * layerUICount);
+                smiLayer = createSMILayer(600, 250 * layerUICount);
                 layerUIs[info.langType] = smiLayer;
                 ++layerUICount;
             }
@@ -107,7 +107,7 @@ function lazyLoading(str, info)
 
 function createSMISlider()
 {
-    var smiLayer = createSMILayer(600, 250 * layerUICount);
+    var smiLayer = createSMILayer(10, 0);
 
     var myLayer = document.createElement('div');
     document.body.appendChild(myLayer);
@@ -115,7 +115,7 @@ function createSMISlider()
 
     var myPlayButton = document.createElement('button');
     myPlayButton.id = 'smiPlayButton';
-    var myPlayText = document.createTextNode(">");
+    var myPlayText = document.createTextNode(">");    
     myPlayButton.appendChild(myPlayText);
     myLayer.appendChild(myPlayButton);
 
@@ -143,11 +143,13 @@ function createSMISlider()
     myPlayButton.onclick = function () {
         
         if (timerId != null) {
+            myPlayText.nodeValue = '>';
             clearInterval(timerId);
             timerId = null;
             return;
         }
 
+        myPlayText.nodeValue = '||';
         timerId = setInterval(function () {
             myNextButton.onclick();            
         }, 3000);
@@ -194,14 +196,6 @@ function createSMILayer(x, y) {
     var myLayer = document.createElement('div');
     myLayer.id = 'smiLayer';
     document.body.appendChild(myLayer);
-
-    var myLayerArrowB = document.createElement('div');
-    myLayerArrowB.id = 'smiLayerArrowB';
-    myLayer.appendChild(myLayerArrowB);
-
-    var myLayerArrowF = document.createElement('div');
-    myLayerArrowF.id = 'smiLayerArrowF';
-    myLayer.appendChild(myLayerArrowF);
 
     myLayer.style.left = x;
     myLayer.style.top = y;
