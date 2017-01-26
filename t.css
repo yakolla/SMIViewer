@@ -1,18 +1,18 @@
+
 #smiLayer {
     color: black;
     position:fixed;
-    left: 10vw;
-    top: 10vh;    
-    max-width: 400px;
+    max-width: 600px;
     max-height: 250px;
-    padding : 3px;    
+    width:500px;
+    padding : 10px;    
     background : -webkit-linear-gradient(bottom, rgba(10, 10, 10, 1), rgba(20, 20, 20, 1));
     opacity : 1;
-    border: 1px solid;
+    border: 3px solid;
     #box-shadow : 3px 3px 3px #888888;
     z-index :  1;
     text-align : left;
-    font-size : 14px;
+    font-size : 24px;
     font-family:Arial;
     line-height:120%;
     -moz-border-radius:3px;
