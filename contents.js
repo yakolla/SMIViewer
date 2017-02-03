@@ -1,6 +1,6 @@
-﻿var debug = false;
+﻿var debug = true;
 var layerUICount = 0;
-var layerUIs = {};
+var fullTextLayerUIs = {};
 var sliderUI;
 var allSyncTimes = [];
 var subtitleSyncTimes = {};
@@ -76,18 +76,14 @@ function lazyLoading(str, info)
         allSyncTimes.push(info.startTime);
 
         subtitleTexts[info.langType][info.startTime] = info.smiText;
-
-        if (debug == true)
-        {
-            var smiLayer = layerUIs[info.langType];
-            if (null == smiLayer) {
-                smiLayer = createSMILayer(600, 250 * layerUICount);
-                layerUIs[info.langType] = smiLayer;
-                ++layerUICount;
-            }
-            smiLayer.innerHTML += "<p>" + info.startTime + ":" + info.smiText + "</p>";
-        }
         
+        var smiFullTextLayer = fullTextLayerUIs[info.langType];
+        if (null == smiFullTextLayer) {
+            smiFullTextLayer = createSMIFullTextLayer(sliderUI.smiLayer);
+            fullTextLayerUIs[info.langType] = smiFullTextLayer;
+            ++layerUICount;
+        }
+        smiFullTextLayer.innerHTML += "<p>" + info.startTime + ":" + info.smiText + "</p>";
             
         var lastSyncTime = syncTimes[syncTimes.length - 1];
         if (sliderUI.smiSlider.max < lastSyncTime)
@@ -140,8 +136,9 @@ function createSMISlider()
     myLayer.appendChild(myPlayTime);
 
     var myLayerContents = document.createElement('div');
-    myLayerContents.id = 'smiLayerContents';
+    myLayerContents.id = 'smiSyncTextLayer';
     myLayer.appendChild(myLayerContents);
+
     var timerId = null;
     myPlayButton.onclick = function () {
         
@@ -209,6 +206,15 @@ function createSMILayer(x, y) {
 
     myLayer.style.left = x;
     myLayer.style.top = y;
+
+    return myLayer;
+}
+
+function createSMIFullTextLayer(smiLayer) {
+
+    var myLayer = document.createElement('div');
+    myLayer.id = 'smiFullTextLayer';
+    smiLayer.appendChild(myLayer);
 
     return myLayer;
 }
