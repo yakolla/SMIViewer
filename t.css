@@ -20,6 +20,27 @@
     overflow:auto;    
 }
 
+#smiPlayButton{
+    float:left;
+}
+
+#smiPrevButton{
+    float:left;
+}
+
+#smiNextButton{
+    float:left;
+}
+
+#smiSlider{
+    float:left;
+}
+
+#smiPlayTime{
+    color: rgb(250,250,250);
+    font-size : 11px;
+}
+
 #smiLayer p {
     color: rgb(250,250,250);
 }

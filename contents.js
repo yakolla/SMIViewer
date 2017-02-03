@@ -135,6 +135,9 @@ function createSMISlider()
     mySlider.value = 0;
     myLayer.appendChild(mySlider);
 
+    var myPlayTime = document.createElement('div');
+    myPlayTime.id = 'smiPlayTime';
+    myLayer.appendChild(myPlayTime);
 
     var myLayerContents = document.createElement('div');
     myLayerContents.id = 'smiLayerContents';
@@ -151,8 +154,9 @@ function createSMISlider()
 
         myPlayText.nodeValue = '||';
         timerId = setInterval(function () {
-            myNextButton.onclick();            
-        }, 3000);
+            mySlider.value = parseInt(mySlider.value) + 100;            
+            mySlider.onchange();
+        }, 100);
        
     };
 
@@ -162,7 +166,7 @@ function createSMISlider()
 
         ++allSyncTimeIdx;
         mySlider.value = allSyncTimes[allSyncTimeIdx];
-        mySlider.onchange();        
+        mySlider.onchange();
     };
 
     myPrevButton.onclick = function () {
@@ -171,24 +175,30 @@ function createSMISlider()
 
         --allSyncTimeIdx;
         mySlider.value = allSyncTimes[allSyncTimeIdx];
-        mySlider.onchange();        
+        mySlider.onchange(); 
     };
-
-    var layerContents = $("#smiLayerContents");
+    
     mySlider.onchange = function () {
         allSyncTimeIdx = allSyncTimes.binaryIndexOf(this.value);
-        layerContents.html('');
-        for (var langType in subtitleSyncTimes) {
-            
-            var idx = subtitleSyncTimes[langType].binaryIndexOf(this.value);
-            if (idx > -1) {
-                var syncTime = subtitleSyncTimes[langType][idx];
-                layerContents.html(layerContents.html() + "<p>" + langType + ":" + syncTime + subtitleTexts[langType][syncTime] + "</p>");
-            }
-        }
+        writeSubtitlesToLayerContents(this.value, myLayerContents);
+
+        myPlayTime.innerHTML = "<p>" + this.value +  " / " + this.max + "</p>";
     };
 
     return { smiLayer: smiLayer, smiSlider: mySlider };
+}
+
+function writeSubtitlesToLayerContents(t, layerContents)
+{    
+    layerContents.innerHTML = "";
+    for (var langType in subtitleSyncTimes) {
+
+        var idx = subtitleSyncTimes[langType].binaryIndexOf(t);        
+        if (idx > -1) {
+            var syncTime = subtitleSyncTimes[langType][idx];
+            layerContents.innerHTML += "<p>" + langType + ":" + syncTime + subtitleTexts[langType][syncTime] + "</p>";
+        }
+    }
 }
 
 function createSMILayer(x, y) {
