@@ -11,7 +11,8 @@ $(document).ready(function () {
 
     loadOptions();
 
-    Array.prototype.binaryIndexOf = binaryIndexOf;
+    Array.prototype.lower_bound = lower_bound;
+    Array.prototype.upper_bound = upper_bound;
 
     var str = $("body pre").text();
     var info = getNextSMIText(str, 0, str.length);
@@ -26,33 +27,49 @@ $(document).ready(function () {
         return true;
     });
 });
-
-function binaryIndexOf(searchElement) {
+// [10, 15, 20], 11 = 10
+function lower_bound(searchElement) {
     
     var minIndex = 0;
     var maxIndex = this.length - 1;
     var currentIndex;
     var currentElement;
-    var lowerIndex;
 
-    while (minIndex <= maxIndex) {
-        currentIndex = (minIndex + maxIndex) / 2 | 0;
+    while (minIndex < maxIndex) {
+        currentIndex = parseInt(minIndex + (maxIndex - minIndex) / 2);
         currentElement = this[currentIndex];
 
         if (currentElement < searchElement) {
             minIndex = currentIndex + 1;
         }
-        else if (currentElement > searchElement) {
-            maxIndex = currentIndex - 1;
-        }
         else {
-            return currentIndex;
+            maxIndex = currentIndex;
         }
     }
-    
-    lowerIndex = Math.abs(~minIndex) - 2;
-    
-    return lowerIndex;
+
+    return minIndex;
+}
+
+function upper_bound(searchElement) {
+
+    var minIndex = 0;
+    var maxIndex = this.length - 1;
+    var currentIndex;
+    var currentElement;
+
+    while (minIndex < maxIndex) {
+        currentIndex = parseInt(minIndex + (maxIndex - minIndex) / 2);
+        currentElement = this[currentIndex];
+
+        if (searchElement <= currentElement) {
+            maxIndex = currentIndex;
+        }
+        else {
+            minIndex = currentIndex + 1;
+        }
+    }
+
+    return minIndex;
 }
 
 
@@ -73,7 +90,8 @@ function lazyLoading(str, info)
         }
 
         syncTimes.push(info.startTime);
-        allSyncTimes.push(info.startTime);
+        if (allSyncTimes[allSyncTimes.lower_bound(info.startTime)] != info.startTime)
+            allSyncTimes.push(info.startTime);
 
         subtitleTexts[info.langType][info.startTime] = info.smiText;
         
@@ -167,8 +185,11 @@ function createSMISlider()
     };
 
     myPrevButton.onclick = function () {
-        if (allSyncTimeIdx <= 0)
+        if (allSyncTimeIdx <= 0) {
+            mySlider.value = 0;
+            mySlider.onchange();
             return;
+        }
 
         --allSyncTimeIdx;
         mySlider.value = allSyncTimes[allSyncTimeIdx];
@@ -176,9 +197,9 @@ function createSMISlider()
     };
     
     mySlider.onchange = function () {
-        allSyncTimeIdx = allSyncTimes.binaryIndexOf(this.value);
+        allSyncTimeIdx = allSyncTimes.lower_bound(this.value);
         writeSubtitlesToLayerContents(this.value, myLayerContents);
-
+        
         myPlayTime.innerHTML = "<p>" + this.value +  " / " + this.max + "</p>";
     };
 
@@ -190,7 +211,7 @@ function writeSubtitlesToLayerContents(t, layerContents)
     layerContents.innerHTML = "";
     for (var langType in subtitleSyncTimes) {
 
-        var idx = subtitleSyncTimes[langType].binaryIndexOf(t);        
+        var idx = subtitleSyncTimes[langType].lower_bound(t);        
         if (idx > -1) {
             var syncTime = subtitleSyncTimes[langType][idx];
             layerContents.innerHTML += "<p>" + langType + ":" + syncTime + subtitleTexts[langType][syncTime] + "</p>";
